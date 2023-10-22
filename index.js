@@ -1,6 +1,14 @@
 const express = require("express");
 const app = express();
 
+// Cross Origin Resource Sharing
+const custom_cors = (req, res, next) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "OPTIONS, POST, GET");
+  next();
+};
+app.use(custom_cors);
+
 // Temp data (moved to backend)
 const data = [
   {
