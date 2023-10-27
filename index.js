@@ -13,7 +13,7 @@ app.use(custom_cors);
 app.use(express.json());
 
 // Temp data (moved to backend)
-const data = [
+let data = [
   {
     id: 1,
     tickerSymbol: "NABIL",
@@ -51,6 +51,24 @@ app.post("/stock/add", (req, res) => {
   addNewStock(data);
 
   return res.json(data);
+});
+
+// Delete stock
+const deleteStock = (d) => {
+  let res = false;
+
+  data = data.filter((stock) => {
+    res = res || stock.tickerSymbol === d;
+    return stock.tickerSymbol !== d;
+  });
+
+  return res;
+};
+
+app.delete("/stock/delete", (req, res) => {
+  const data = req.body;
+  const s = deleteStock(data["tickerSymbol"]);
+  return res.json({ success: s });
 });
 
 app.listen(4000, () => {
