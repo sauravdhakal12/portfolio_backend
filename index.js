@@ -71,6 +71,12 @@ app.delete("/stock/delete", (req, res) => {
   return res.json({ success: s });
 });
 
+// Handle unknown endpoint
+const unknownEndPoint = (req, res) => {
+  res.status(404).send({ error: "unknown endpoint" });
+};
+app.use(unknownEndPoint);
+
 app.listen(4000, () => {
   console.log("Listening on port 4000");
 });
