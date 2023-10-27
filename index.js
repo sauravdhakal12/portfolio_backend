@@ -9,6 +9,9 @@ const custom_cors = (req, res, next) => {
 };
 app.use(custom_cors);
 
+// Parse data from request, available as request.body
+app.use(express.json());
+
 // Temp data (moved to backend)
 const data = [
   {
@@ -31,9 +34,23 @@ const data = [
   },
 ];
 
+// NOTE: API
+
 // Return all stocks
-app.get("/api/stocks", (req, res) => {
+app.get("/stock/get", (req, res) => {
   res.json(data);
+});
+
+// Add new stock
+const addNewStock = (d) => {
+  data.push(d);
+};
+
+app.post("/stock/add", (req, res) => {
+  const data = req.body;
+  addNewStock(data);
+
+  return res.json(data);
 });
 
 app.listen(4000, () => {
