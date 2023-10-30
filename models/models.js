@@ -21,7 +21,7 @@ const stockSchema = new mongoose.Schema({
 // Remove _id and __v from json res
 stockSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    returnedObject._id = returnedObject.id.toString();
+    returnedObject._id = returnedObject._id.toString();
     delete returnedObject._id;
     delete returnedObject.__v;
   }

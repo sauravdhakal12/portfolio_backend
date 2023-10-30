@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+const Stock = require("./models/models");
+
 // Cross Origin Resource Sharing
 const custom_cors = (req, res, next) => {
   res.set("Access-Control-Allow-Origin", "*");
@@ -46,11 +48,24 @@ const addNewStock = (d) => {
   data.push(d);
 };
 
+// Save Stock info to DB
 app.post("/stock/add", (req, res) => {
+  
+  // Get data from form
   const data = req.body;
-  addNewStock(data);
 
-  return res.json(data);
+  // Create a new object out of Stock model
+  const newStock = new Stock(data);
+
+  // Save new Stock info
+  newStock.save().then((d) => {
+    return res.json(d);
+  }).catch((err) => {
+
+    // Error handeling(TODO: move to middleware)
+    console.log(err);
+    return res.status(500);
+  }); 
 });
 
 // Delete stock
