@@ -40,8 +40,20 @@ let data = [
 
 // Return all stocks
 app.get("/stock/get", (req, res) => {
-  res.json(data);
+  
+  // Fetch all stocks from DB
+  Stock.find({}).then(data => {
+
+    // Return the list back
+    return res.json(data);
+
+    // Error handeling (TODO: Move to middleware)
+  }).catch(err => {
+    console.log(err);
+    return res.status(404);
+  })
 });
+
 
 // Add new stock
 const addNewStock = (d) => {
