@@ -30,7 +30,7 @@ app.get("/stock/get", (req, res) => {
   }).catch(err => {
     console.log(err);
     return res.status(404);
-  })
+  });
 });
 
 
@@ -49,8 +49,19 @@ app.post("/stock/add", (req, res) => {
   }).catch((err) => {
 
     // Error handeling(TODO: move to middleware)
-    console.log(err);
-    return res.status(500);
+    let msg = "";
+    
+    if(err.errors.tickerSymbol) {
+      msg = err.errors.tickerSymbol.properties.message;
+    }
+    else if(err.errors.price) {
+      msg = err.errors.price.properties.message;
+    }
+    else if(err.errors.quantity) {
+      msg = err.errors.quantity.properties.message;
+    }
+    
+    return res.status(400).json({"error": msg});
   }); 
 });
 

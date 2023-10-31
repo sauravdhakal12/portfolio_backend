@@ -13,9 +13,26 @@ mongoose.connect(URL).then(res => {
 
 // Create a Schema for the data
 const stockSchema = new mongoose.Schema({
-  tickerSymbol: String,
-  price: Number,
-  quantity: Number
+  
+  // Rules
+  //  - All fields should be non empty
+  //  - Minimum quantity of share allowed is 10
+
+  tickerSymbol: {
+    type: String,
+    required: [true, "Empty field not allowed"],
+  },
+
+  price: {
+    type: Number,
+    required: [true, "Empty field not allowed"],
+  },
+
+  quantity: {
+    type: Number,
+    min: [10, "Minimum quantity allowed is 10"],
+    required: [true, "Empty field not allowed"],    
+  }
 });
 
 // Remove _id and __v from json res
