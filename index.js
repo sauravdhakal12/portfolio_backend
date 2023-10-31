@@ -36,7 +36,7 @@ let data = [
   },
 ];
 
-// NOTE: API
+// TODO: API is not in REST 
 
 // Return all stocks
 app.get("/stock/get", (req, res) => {
@@ -62,7 +62,7 @@ const addNewStock = (d) => {
 
 // Save Stock info to DB
 app.post("/stock/add", (req, res) => {
-  
+
   // Get data from form
   const data = req.body;
 
@@ -92,10 +92,24 @@ const deleteStock = (d) => {
   return res;
 };
 
-app.delete("/stock/delete", (req, res) => {
-  const data = req.body;
-  const s = deleteStock(data["tickerSymbol"]);
-  return res.json({ success: s });
+
+// Delete stock by id
+app.delete("/stock/delete/:id", (req, res) => {
+
+  // Get id from request
+  const id = req.params.id;
+  
+  // Find and delete (if not found, returns remove object or null)
+  Stock.findByIdAndRemove(id).then(data => {
+
+    // TODO: Data null or not
+    return res.json(data);
+  }).catch(err => {
+
+    // TODO: error, malformed key
+    console.log(err);
+    return res.status(500);
+  });
 });
 
 // Handle unknown endpoint
