@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", "false");
 
 // URL: Move to .env file
-const URL = "mongodb+srv://share_app:L97eUA3053giNZLH@cluster0.sxcx7sm.mongodb.net/stockApp?retryWrites=true&w=majority"
+const URL = "mongodb+srv://share_app:L97eUA3053giNZLH@cluster0.sxcx7sm.mongodb.net/stockApp?retryWrites=true&w=majority";
 
 // Connect to DB
 mongoose.connect(URL).then(res => {
@@ -19,7 +19,7 @@ const stockSchema = new mongoose.Schema({
 });
 
 // Remove _id and __v from json res
-stockSchema.set('toJSON', {
+stockSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
@@ -28,4 +28,4 @@ stockSchema.set('toJSON', {
 });
 
 // Export DB model
-module.exports = mongoose.model('Stock', stockSchema);
+module.exports = mongoose.model("Stock", stockSchema);
