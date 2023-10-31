@@ -14,27 +14,6 @@ app.use(custom_cors);
 // Parse data from request, available as request.body
 app.use(express.json());
 
-// Temp data (moved to backend)
-let data = [
-  {
-    id: 1,
-    tickerSymbol: "NABIL",
-    quantity: 12,
-    price: "780",
-  },
-  {
-    id: 2,
-    tickerSymbol: "NICA",
-    quantity: 20,
-    price: "680",
-  },
-  {
-    id: 3,
-    tickerSymbol: "API",
-    quantity: 40,
-    price: "269",
-  },
-];
 
 // TODO: API is not in REST 
 
@@ -55,11 +34,6 @@ app.get("/stock/get", (req, res) => {
 });
 
 
-// Add new stock
-const addNewStock = (d) => {
-  data.push(d);
-};
-
 // Save Stock info to DB
 app.post("/stock/add", (req, res) => {
 
@@ -79,18 +53,6 @@ app.post("/stock/add", (req, res) => {
     return res.status(500);
   }); 
 });
-
-// Delete stock
-const deleteStock = (d) => {
-  let res = false;
-
-  data = data.filter((stock) => {
-    res = res || stock.tickerSymbol === d;
-    return stock.tickerSymbol !== d;
-  });
-
-  return res;
-};
 
 
 // Delete stock by id
