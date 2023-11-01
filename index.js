@@ -15,10 +15,34 @@ app.use(custom_cors);
 app.use(express.json());
 
 
+const errorHandler = (err, req, res, next) => {
+  console.log(err.message);
+  
+  // Id dosen't follow correct format
+  if(err.name === "CastError") {
+    return res.status(400).json({"error": "Malformed ID"});
+  }
+
+  // Error from DB
+  else if (err.name === "ValidationError") {
+    
+    // Get msg
+    const msg = Object.values(err.errors).map(value => value.message)[0];
+
+    return res.status(400).json({"error": msg});
+  }
+
+  // Unknown error
+  else {
+    return res.status(500).json({"error": "Unknown Error"});
+  }
+};
+
+
 // TODO: API is not in REST 
 
 // Return all stocks
-app.get("/stock/get", (req, res) => {
+app.get("/stock/get", (req, res, next) => {
   
   // Fetch all stocks from DB
   Stock.find({}).then(data => {
@@ -26,16 +50,13 @@ app.get("/stock/get", (req, res) => {
     // Return the list back
     return res.json(data);
 
-    // Error handeling (TODO: Move to middleware)
-  }).catch(err => {
-    console.log(err);
-    return res.status(404);
-  });
+    // Error handeling
+  }).catch(err => next(err));
 });
 
 
 // Save Stock info to DB
-app.post("/stock/add", (req, res) => {
+app.post("/stock/add", (req, res, next) => {
 
   // Get data from form
   const data = req.body;
@@ -46,28 +67,14 @@ app.post("/stock/add", (req, res) => {
   // Save new Stock info
   newStock.save().then((d) => {
     return res.json(d);
-  }).catch((err) => {
 
-    // Error handeling(TODO: move to middleware)
-    let msg = "";
-    
-    if(err.errors.tickerSymbol) {
-      msg = err.errors.tickerSymbol.properties.message;
-    }
-    else if(err.errors.price) {
-      msg = err.errors.price.properties.message;
-    }
-    else if(err.errors.quantity) {
-      msg = err.errors.quantity.properties.message;
-    }
-    
-    return res.status(400).json({"error": msg});
-  }); 
+    // Error handeling
+  }).catch((err) => next(err));
 });
 
 
 // Delete stock by id
-app.delete("/stock/delete/:id", (req, res) => {
+app.delete("/stock/delete/:id", (req, res, next) => {
 
   // Get id from request
   const id = req.params.id;
@@ -77,12 +84,7 @@ app.delete("/stock/delete/:id", (req, res) => {
 
     // TODO: Data null or not
     return res.json(data);
-  }).catch(err => {
-
-    // TODO: error, malformed key
-    console.log(err);
-    return res.status(500);
-  });
+    }).catch(err => next(err));
 });
 
 // Handle unknown endpoint
@@ -90,6 +92,8 @@ const unknownEndPoint = (req, res) => {
   res.status(404).send({ error: "unknown endpoint" });
 };
 app.use(unknownEndPoint);
+
+app.use(errorHandler);
 
 app.listen(4000, () => {
   console.log("Listening on port 4000");
