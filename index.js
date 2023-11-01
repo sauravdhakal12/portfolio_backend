@@ -39,10 +39,8 @@ const errorHandler = (err, req, res, next) => {
 };
 
 
-// TODO: API is not in REST 
-
 // Return all stocks
-app.get("/stock/get", (req, res, next) => {
+app.get("/api/stocks", (req, res, next) => {
   
   // Fetch all stocks from DB
   Stock.find({}).then(data => {
@@ -56,7 +54,7 @@ app.get("/stock/get", (req, res, next) => {
 
 
 // Save Stock info to DB
-app.post("/stock/add", (req, res, next) => {
+app.post("/api/stocks", (req, res, next) => {
 
   // Get data from form
   const data = req.body;
@@ -74,7 +72,7 @@ app.post("/stock/add", (req, res, next) => {
 
 
 // Delete stock by id
-app.delete("/stock/delete/:id", (req, res, next) => {
+app.delete("/api/stocks/:id", (req, res, next) => {
 
   // Get id from request
   const id = req.params.id;
@@ -82,14 +80,16 @@ app.delete("/stock/delete/:id", (req, res, next) => {
   // Find and delete (if not found, returns remove object or null)
   Stock.findByIdAndRemove(id).then(data => {
 
-    // TODO: Data null or not
+    if(data === null) {
+      return res.json({"error": "Data with specified key dosent exist"});
+    }    
     return res.json(data);
     }).catch(err => next(err));
 });
 
 // Handle unknown endpoint
 const unknownEndPoint = (req, res) => {
-  res.status(404).send({ error: "unknown endpoint" });
+  res.status(404).send({ error: "Unknown endpoint" });
 };
 app.use(unknownEndPoint);
 
