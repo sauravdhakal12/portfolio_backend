@@ -14,12 +14,17 @@ const custom_cors = (req, res, next) => {
     specific methods and headers.
     --
     In this case, browser wants to know if path "/api/stocks"
-    allows POST method and if Content-Type header will be set.
+    allows POST or DELETE method and if Content-Type header will be set.
+    (Content-Type is not required for DELETE method)
     --
     (Content-Type header : original media type of the resource,
     prior to any content encoding applied for sending.)
   */
-  if(req.method === "OPTIONS" && req.path === "/api/stocks") {
+
+  if(req.method === "OPTIONS" && (
+    req.path === "/api/stocks" ||  // POST
+    req.path.match("/api/stock/*") !== null  // DELETE
+  )) {
     res.status(204);
     res.set("Access-Control-Allow-Headers", "Content-Type");
     res.end();
