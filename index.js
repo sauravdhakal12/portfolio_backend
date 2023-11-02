@@ -6,7 +6,25 @@ const Stock = require("./models/models");
 // Cross Origin Resource Sharing
 const custom_cors = (req, res, next) => {
   res.set("Access-Control-Allow-Origin", "*");
-  res.set("Access-Control-Allow-Methods", "OPTIONS, POST, GET");
+  res.set("Access-Control-Allow-Methods", "OPTIONS, POST, GET, DELETE, PUT");
+
+  /*
+    A CORS preflight request is a CORS request that checks to see
+    if the CORS protocol is understood and a server is aware using
+    specific methods and headers.
+    --
+    In this case, browser wants to know if path "/api/stocks"
+    allows POST method and if Content-Type header will be set.
+    --
+    (Content-Type header : original media type of the resource,
+    prior to any content encoding applied for sending.)
+  */
+  if(req.method === "OPTIONS" && req.path === "/api/stocks") {
+    res.status(204);
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    res.end();
+  }
+
   next();
 };
 app.use(custom_cors);
